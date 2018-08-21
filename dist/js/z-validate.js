@@ -57,44 +57,52 @@ var Zvalidate = function () {
   }, {
     key: '_getFnByRules',
     value: function _getFnByRules(rules) {
-      var self = this;
-      var ruleKeys = Object.keys(rules);
-      this.fns = ruleKeys.map(function (item, index) {
-        return function (next) {
-          return function (data) {
-            // 获取需要验证的数据
-            var _data = data[item];
-            // 这里有问题，需要优化因为可能有多个条件用|风割
-            var methodNames = rules[item].split('|');
-            var methodReducer = methodNames.map(function (item, index) {
-              return function (next) {
+      return function () {
+        var checkAll = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
-                return function (data) {
-                  var res = staticRules[item](_data);
-                  if (res.valid) {
-                    return next(data);
-                  } else {
-                    return res;
-                  }
+        var self = this;
+        var results = [];
+        var ruleKeys = Object.keys(rules);
+        this.fns = ruleKeys.map(function (item, index) {
+          return function (next) {
+            return function (data) {
+              // 获取需要验证的数据
+              var _data = data[item];
+              // 这里有问题，需要优化因为可能有多个条件用|风割
+              var methodNames = rules[item].split('|');
+              var methodReducer = methodNames.map(function (item, index) {
+                return function (next) {
+                  return function (data) {
+                    var res = staticRules[item](_data);
+                    if (res.valid) {
+                      return next(data);
+                    } else {
+                      return res;
+                    }
+                  };
                 };
-              };
-            });
-            var res = self.compose.apply(self, _toConsumableArray(methodReducer))(function () {
-              return { valid: true, msg: '' };
-            })(data);
+              });
+              var res = self.compose.apply(self, _toConsumableArray(methodReducer))(function () {
+                return { valid: true, msg: '' };
+              })(data);
 
-            if (res.valid) {
-              return next(data);
-            } else {
-              return res;
-            }
+              if (res.valid) {
+                return next(data);
+              } else {
+                if (checkAll) {
+                  results.push(res);
+                  next(data);
+                  return results;
+                } else {
+                  return res;
+                }
+              }
+            };
           };
-        };
-      });
-      var ab = this.compose.apply(this, _toConsumableArray(this.fns))(function () {
-        return { valid: true, msg: '' };
-      });
-      return function (checkall) {
+        });
+        var ab = this.compose.apply(this, _toConsumableArray(this.fns))(function () {
+          return { valid: true, msg: '' };
+        });
         return function (data) {
           return ab(data);
         };
@@ -124,4 +132,4 @@ var a = new Zvalidate({
   c: 'isPhone'
 });
 
-console.log(a.check({ a: 1111, b: 111, c: 1111 }));
+console.log(a.checkAll({ a: '', b: 111, c: '1111' }));

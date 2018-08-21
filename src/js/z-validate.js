@@ -27,6 +27,7 @@ class Zvalidate {
   constructor (rules) {
     this.rules = rules
     this._validFn = this._getFnByRules(this.rules)
+
   }
 
   compose () {
@@ -40,47 +41,53 @@ class Zvalidate {
   }
 
   _getFnByRules (rules) {
-    const self = this
-    const ruleKeys = Object.keys(rules)
-    this.fns = ruleKeys.map(function (item, index) {
-      return function (next) {
-        return function (data) {
-          // 获取需要验证的数据
-          const _data = data[item]
-          // 这里有问题，需要优化因为可能有多个条件用|风割
-          const methodNames = rules[item].split('|')
-          const methodReducer = methodNames.map(function (item, index) {
-            return function (next) {
-
-              return function (data) {
-                const res = staticRules[item](_data)
-                if (res.valid) {
-                  return next(data)
-                } else {
-                  return res
+    return function (checkAll = 0) {
+      const self = this
+      const results = []
+      const ruleKeys = Object.keys(rules)
+      this.fns = ruleKeys.map(function (item, index) {
+        return function (next) {
+          return function (data) {
+            // 获取需要验证的数据
+            const _data = data[item]
+            // 这里有问题，需要优化因为可能有多个条件用|风割
+            const methodNames = rules[item].split('|')
+            const methodReducer = methodNames.map(function (item, index) {
+              return function (next) {
+                return function (data) {
+                  const res = staticRules[item](_data)
+                  if (res.valid) {
+                    return next(data)
+                  } else {
+                    return res
+                  }
                 }
               }
+            })
+            const res = self.compose(...methodReducer)(function () {return {valid: true, msg: ''}})(data)
 
+            if (res.valid) {
+              return next(data)
+            } else {
+              if (checkAll) {
+                results.push(res)
+                next(data)
+                return results
+              } else {
+                return res
+              }
             }
-          })
-          const res = self.compose(...methodReducer)(function () {return {valid: true, msg: ''}})(data)
-
-          if (res.valid) {
-            return next(data)
-          } else {
-            return res
           }
         }
-      }
-    })
-    const ab = this.compose(...this.fns)(function () {
-      return {valid: true, msg: ''}
-    })
-    return function (checkall) {
+      })
+      const ab = this.compose(...this.fns)(function () {
+        return {valid: true, msg: ''}
+      })
       return function (data) {
         return ab(data)
       }
     }
+    
   }
 
   // 根据规则来验证数据
@@ -99,4 +106,4 @@ var a = new Zvalidate({
   c: 'isPhone'
 })
 
-console.log(a.check({a: 1111, b: 111, c: 1111}))
+console.log(a.checkAll({a: '', b: 111, c: '1111'}))
