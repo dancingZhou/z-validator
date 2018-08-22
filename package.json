@@ -4,14 +4,18 @@
   "description": "这是一个验证器，验证数据是否符合规则，所以在这句话中就可以看出元素有两个，一个是被验证的数据，一个是规则。 要完成的就是一个根据规则来验证数据的外壳。 同一个数据可能要满足很多规则，如{password}要满足password不能为空，长度有要求，要数字字符下划线组合之类的。 rule: [{fieldName: 'required|a:1,2'}] required是函数名 : 后面的是参数，当然可以自定义验证规则",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/z-validate.test.js",
+    "build": "gulp build",
+    "dev": "gulp dev"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
+    "chai": "^4.1.2",
     "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.1"
+    "gulp-babel": "^7.0.1",
+    "mocha": "^5.2.0"
   }
 }

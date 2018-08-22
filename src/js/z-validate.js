@@ -100,10 +100,12 @@ class Zvalidate {
   }
 }
 
-var a = new Zvalidate({
-  a: 'required|isPhone',
-  b: 'required',
-  c: 'isPhone'
-})
+// var a = new Zvalidate({
+//   a: 'required|isPhone',
+//   b: 'required',
+//   c: 'isPhone'
+// })
 
-console.log(a.checkAll({a: '', b: 111, c: '1111'}))
+export default Zvalidate
+
+// console.log(a.checkAll({a: '', b: 111, c: '1111'}))

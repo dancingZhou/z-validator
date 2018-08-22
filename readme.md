@@ -14,3 +14,6 @@ fieldName: errMsg
 还需要支持umd，要再看下UMD是什么
 
 分支管理策略，master是稳定，dev是开发
+
+改进点：
+添加的checkAll 思路有问题，不完善，用了全局变量results，并且用了很不好的方法返回出去，改进思路为 既然compose的时候已经知道是否checkAll 就可以针对性的阻止函数不需要这么不合适的方式

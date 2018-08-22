@@ -1,5 +1,9 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -126,10 +130,12 @@ var Zvalidate = function () {
   return Zvalidate;
 }();
 
-var a = new Zvalidate({
-  a: 'required|isPhone',
-  b: 'required',
-  c: 'isPhone'
-});
+// var a = new Zvalidate({
+//   a: 'required|isPhone',
+//   b: 'required',
+//   c: 'isPhone'
+// })
 
-console.log(a.checkAll({ a: '', b: 111, c: '1111' }));
+exports.default = Zvalidate;
+
+// console.log(a.checkAll({a: '', b: 111, c: '1111'}))
