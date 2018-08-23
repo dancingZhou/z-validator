@@ -2,5 +2,32 @@
   <head>
     <meta charset="utf-8"/>
     <script type="text/javascript" src="./js/z-validate.js"></script>
+    <script type="text/javascript">
+      function hh () {
+        return {
+          valid: false,
+          errorMsg: '呵呵了'
+        }
+      }
+     var a = new Zvalidate({
+      a: {
+        rules: function (data) {
+          return {
+            valid: false,
+            msg: 'a错了'
+          }
+        },
+        errorMsg: 'a不能为空'
+      },
+      b: {
+        rules: 'isPhone',
+        errorMsg: '请输入正确的手机号'
+      }})
+
+
+console.log(a.checkAll({a: '',
+      b: '11'}))
+console.log(untils.typeof(''))
+    </script>
   </head>
 </html>

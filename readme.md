@@ -17,3 +17,9 @@ fieldName: errMsg
 
 改进点：
 添加的checkAll 思路有问题，不完善，用了全局变量results，并且用了很不好的方法返回出去，改进思路为 既然compose的时候已经知道是否checkAll 就可以针对性的阻止函数不需要这么不合适的方式
+
+staticRules不合适，需要修改
+
+提供两种检查结果形式，一种是数组，一种是对象，实现方式可以在返回的对象上做文章
+
+统一msg 和 errorMsg

@@ -1,3 +1,27 @@
+const untils = {
+  /**
+   * 获取数据类型
+   * @param  {需要找出类型的数据} data [description]
+   * @return {type}      
+   * string
+   * number
+   * boolean
+   * null
+   * undefined
+   * function
+   * array
+   * error
+   * regexp
+   * date
+   * symbol
+   */
+  typeof: function (data) {
+    var type = Object.prototype.toString.call(data).match(/\[object (\w*)\]/)[1]
+    return type.toLowerCase()
+  }
+}
+
+
 const staticRules = {
   // 必须有这个字符串并且不能为''
   required (value, msg = '不能为空') {
@@ -21,6 +45,9 @@ const staticRules = {
 
 /**
  * rules ---> {field: 'rule1:|rule2|rule3', field2: fn}
+ * {
+ *   field: {rule: '', errorMsg: ''}
+ * }
  */
 
 class Zvalidate {
@@ -49,13 +76,29 @@ class Zvalidate {
         return function (next) {
           return function (data) {
             // 获取需要验证的数据
-            const _data = data[item]
-            // 这里有问题，需要优化因为可能有多个条件用|风割
-            const methodNames = rules[item].split('|')
+            let _data = data[item], _rules = rules[item], errorMsg, methodNames
+            if (typeof _rules === 'object' && _rules) {
+              errorMsg = _rules.errorMsg
+              _rules = _rules.rules
+            }
+
+            // 可能自定义函数来处理
+            if (typeof _rules === 'string') {
+              methodNames = _rules.split('|')
+            } else if (untils.typeof(_rules) === 'function') {
+              // 这里只能是函数
+              methodNames = [_rules]
+            } 
+            
+
             const methodReducer = methodNames.map(function (item, index) {
               return function (next) {
                 return function (data) {
-                  const res = staticRules[item](_data)
+                  let res = untils.typeof(item) === 'function' ? 
+                            item(_data) 
+                            : 
+                            staticRules[item](_data, errorMsg)
+
                   if (res.valid) {
                     return next(data)
                   } else {
@@ -100,12 +143,4 @@ class Zvalidate {
   }
 }
 
-// var a = new Zvalidate({
-//   a: 'required|isPhone',
-//   b: 'required',
-//   c: 'isPhone'
-// })
-
 export default Zvalidate
-
-// console.log(a.checkAll({a: '', b: 111, c: '1111'}))
