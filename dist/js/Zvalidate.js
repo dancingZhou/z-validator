@@ -8,7 +8,7 @@
       exports: {}
     };
     factory(mod);
-    global.zValidate = mod.exports;
+    global.Zvalidate = mod.exports;
   }
 })(this, function (module) {
   'use strict';

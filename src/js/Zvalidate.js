@@ -143,4 +143,4 @@ class Zvalidate {
   }
 }
 
-export default Zvalidate
+module.exports = Zvalidate
